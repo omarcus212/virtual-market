@@ -1,0 +1,46 @@
+# ===============
+# ARQUIVOS SENSÍVEIS
+# ===============
+.env
+.env.local
+.env.*.local
+
+# ===============
+# ARQUIVOS GERADOS
+# ===============
+*.log
+*.lock
+*.sql
+*.sqlite
+public/uploads/*
+!public/uploads/.gitkeep  # Mantém o diretório vazio no repositório
+
+# ===============
+# ARQUIVOS TEMPORÁRIOS
+# ===============
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+*.tmp
+
+# ===============
+# CONFIGURAÇÕES DE IDE
+# ===============
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.atom/
+*.vs/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ===============
+# ARQUIVOS DE BUILD
+# ===============
+build/
+dist/
