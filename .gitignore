@@ -10,8 +10,6 @@
 # ===============
 *.log
 *.lock
-*.sql
-*.sqlite
 public/uploads/*
 !public/uploads/.gitkeep  # Mantém o diretório vazio no repositório
 
