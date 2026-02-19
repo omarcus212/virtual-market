@@ -201,8 +201,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 response.closeLoading();
 
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    response.error(xhr.responseJSON.errors);
+                    const errors = xhr.responseJSON.errors;
+
+                    let message = '';
+
+                    if (Array.isArray(errors) || typeof errors === 'object') {
+                        message = 'Não foi possível deletar, ID está vinculado.';
+
+                    } else if (typeof errors === 'string') {
+                        message = errors;
+                    }
+
+
+                    response.error(message);
                 }
+
             });
     };
 

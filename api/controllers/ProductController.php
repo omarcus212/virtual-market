@@ -119,7 +119,7 @@ class ProductController
                 return Response::success($result, 'Produtos excluídos com sucesso', );
 
             } else {
-                return Response::error('Não foi possível excluir os produtos');
+                return Response::error('Não foi possível excluir os produtos / ID(s) vinculado');
             }
 
         } catch (Exception $e) {

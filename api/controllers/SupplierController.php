@@ -131,7 +131,7 @@ class SupplierController
             if ($suppliers['deleted'] > 0) {
                 return Response::success($suppliers, 'Produtos excluídos com sucesso', );
             } else {
-                return Response::error('Não foi possível excluir os produtos');
+                return Response::error('Não foi possível excluir os produtos / ID(s) vinculado');
             }
 
         } catch (Exception $e) {

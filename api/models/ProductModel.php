@@ -5,6 +5,8 @@ class ProductModel
     private $pdo;
     private $table = 'products';
     private $view = 'view_products';
+    private $relation_table = 'product_supplier';
+
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
@@ -110,19 +112,41 @@ class ProductModel
 
     public function delete($ids)
     {
-        $deleted = 0;
-        foreach ($ids as $id) {
+        try {
+            $this->pdo->beginTransaction();
 
-            $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = :id");
-            $stmt->execute([':id' => $id]);
+            foreach ($ids as $id) {
+                $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) as count FROM {$this->relation_table} WHERE product_id = :id
+            ");
+                $stmt->execute([':id' => $id]);
+                $row = $stmt->fetch();
 
-            if ($stmt->rowCount() > 0) {
-                $deleted++;
+                if ($row['count'] > 0) {
+                    // Se qualquer um estiver vinculado, cancela tudo e retorna erro
+                    $this->pdo->rollBack();
+                    return ['deleted' => 0];
+                }
             }
+
+            $deleted = 0;
+            foreach ($ids as $id) {
+
+                $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = :id");
+                $stmt->execute([':id' => $id]);
+
+                if ($stmt->rowCount() > 0) {
+                    $deleted++;
+                }
+            }
+
+            $this->pdo->commit();
+            return ['deleted' => $deleted];
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            throw new Exception('Erro ao excluir: ' . $e->getMessage());
         }
-
-        return ['deleted' => $deleted];
-
     }
 
 }

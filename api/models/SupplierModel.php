@@ -5,6 +5,7 @@ class SupplierModel
     private $pdo;
     private $table = 'suppliers';
     private $view = 'view_suppliers';
+    private $relation_table = 'product_supplier';
 
     public function __construct($pdo)
     {
@@ -160,19 +161,42 @@ class SupplierModel
 
     public function delete($ids)
     {
-        $deleted = 0;
-        foreach ($ids as $id) {
+        try {
+            $this->pdo->beginTransaction();
 
-            $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = :id");
-            $stmt->execute([':id' => $id]);
+            foreach ($ids as $id) {
+                $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) as count FROM {$this->relation_table}  WHERE supplier_id = :id
+            ");
+                $stmt->execute([':id' => $id]);
+                $row = $stmt->fetch();
 
-            if ($stmt->rowCount() > 0) {
-                $deleted++;
+                if ($row['count'] > 0) {
+
+                    $this->pdo->rollBack();
+                    return ['deleted' => 0];
+
+                }
             }
+
+            $deleted = 0;
+            foreach ($ids as $id) {
+
+                $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = :id");
+                $stmt->execute([':id' => $id]);
+
+                if ($stmt->rowCount() > 0) {
+                    $deleted++;
+                }
+            }
+
+            $this->pdo->commit();
+            return ['deleted' => $deleted];
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            throw new Exception('Erro ao excluir fornecedor: ' . $e->getMessage());
         }
-
-        return ['deleted' => $deleted];
-
     }
 
 }
