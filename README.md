@@ -44,6 +44,8 @@ Interface intuitiva para gerenciar relacionamentos
 1. Clone o repositório
    ```
    git clone https://github.com/omarcus212/virtual-market
+   ```
+   ```
    cd virtual-market
    ```
 2. Configure o ambiente
